@@ -4,7 +4,6 @@ import ready from './listeners/ready'
 dotenv.config()
 
 const token = process.env.DISCORD_TOKEN;
-
 console.log("Bot is starting...")
 
 const client = new Client({
