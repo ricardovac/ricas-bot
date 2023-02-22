@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, Client, ApplicationCommandType } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  Client,
+  ApplicationCommandType,
+} from "discord.js";
 import { Command } from "../Command";
 
 export const Hello: Command = {
@@ -10,7 +14,7 @@ export const Hello: Command = {
 
     await interaction.followUp({
       ephemeral: true,
-      content
+      content,
     });
-  }
+  },
 };
