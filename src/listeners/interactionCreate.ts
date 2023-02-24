@@ -1,5 +1,5 @@
 import { Client, ChatInputCommandInteraction } from "discord.js";
-import { Commands } from "../../src/Commands";
+import { Commands } from "../Commands";
 
 export default (client: Client): void => {
   client.on("interactionCreate", async (interaction: any) => {
@@ -15,7 +15,7 @@ const handleSlashCommand = async (
 ): Promise<void> => {
   const slashCommand = Commands.find((c) => c.name === interaction.commandName);
   if (!slashCommand) {
-    interaction.followUp({ content: "An error has occurred" });
+    await interaction.followUp({content: "An error has occurred"});
     return;
   }
 
