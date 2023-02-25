@@ -1,4 +1,4 @@
-import {Client, GatewayIntentBits, IntentsBitField} from "discord.js";
+import { Client, GatewayIntentBits } from "discord.js";
 import * as dotenv from "dotenv";
 import interactionCreate from "./listeners/interactionCreate";
 import ready from "./listeners/ready";
@@ -10,9 +10,12 @@ console.log("Bot is starting...");
 
 const client = new Client({
   intents:
-      [GatewayIntentBits.Guilds,
-      GatewayIntentBits.GuildMessages,
-      GatewayIntentBits.MessageContent]
+      [
+          GatewayIntentBits.Guilds,
+          GatewayIntentBits.GuildMessages,
+          GatewayIntentBits.MessageContent,
+          GatewayIntentBits.GuildVoiceStates
+      ]
 });
 
 ready(client);
