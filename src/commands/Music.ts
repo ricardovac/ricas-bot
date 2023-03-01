@@ -110,6 +110,37 @@ export const Music = {
                             ephemeral: true
                         })
                     }
+
+                    // Skipping, Pausing, Resuming and queue commands
+                    switch (options.getString("options")) {
+                        case "skip": {
+                            await queue.skip()
+                            return interaction.reply({content: "Song has been skipped."})
+                        }
+                        case "stop": {
+                            await queue.stop()
+                            return interaction.reply({content: "Music has been stopped."})
+                        }
+                        case "pause": {
+                            await queue.pause()
+                            return interaction.reply({content: "Music has been paused."})
+                        }
+                        case "resume": {
+                            await queue.resume()
+                            return interaction.reply({content: "Music has been resumed."})
+                        }
+                        case "queue": {
+                            return interaction.reply({
+                                embeds: [new MessageEmbed()
+                                    .setColor("DARK_PURPLE")
+                                    .setDescription(`${queue.songs.map(
+                                        (song, id) => `\n**${id + 1}** ${song.name} - \`${song.formattedDuration}\``
+                                    )}`)
+                                ]
+                            })
+                        }
+                    }
+                    return
                 }
             }
         } catch (e) {
