@@ -1,4 +1,4 @@
-import {Client, CommandInteraction} from "discord.js";
+import {Client, CommandInteraction, GuildTextBasedChannel, MessageEmbed} from "discord.js";
 
 export const Music = {
     name: "music",
@@ -55,5 +55,38 @@ export const Music = {
      * @param {Client} client
      */
     async execute(interaction: CommandInteraction<"cached">, client: Client) {
+        const {options, member, guild, channel} = interaction
+        const voiceChannel = member.voice.channel
+
+        if (!voiceChannel)
+            return interaction.reply({content: "You must be in a voice channel", ephemeral: true})
+
+        if (guild.members.me?.voice.channelId && voiceChannel.id !== guild.members.me.voice.channelId)
+            return interaction.reply({
+                content: `Already playing music in ${guild.members.me.voice.channelId}`,
+                ephemeral: true
+            })
+
+        try {
+            switch (options.getSubcommand()) {
+                case "play": {
+                    await client.distube.play(
+                        voiceChannel,
+                        options.getString("query") || '',
+                        {
+                            textChannel: channel as GuildTextBasedChannel || undefined,
+                            member: member
+                        }
+                    )
+                    return interaction.reply({content: "Request received"})
+                }
+            }
+
+        } catch (e) {
+            const errorEmbed = new MessageEmbed()
+                .setColor("RED")
+                .setDescription(`Alert: ${e}`)
+            return interaction.reply({embeds: [errorEmbed]})
+        }
     }
 }
