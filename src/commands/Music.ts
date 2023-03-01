@@ -58,14 +58,16 @@ export const Music = {
         const {options, member, guild, channel} = interaction
         const voiceChannel = member.voice.channel
 
-        if (!voiceChannel)
+        if (!voiceChannel) {
             return interaction.reply({content: "You must be in a voice channel", ephemeral: true})
+        }
 
-        if (guild.members.me?.voice.channelId && voiceChannel.id !== guild.members.me.voice.channelId)
+        if (guild.members.me?.voice.channelId && voiceChannel.id !== guild.members.me.voice.channelId) {
             return interaction.reply({
                 content: `Already playing music in ${guild.members.me.voice.channelId}`,
                 ephemeral: true
             })
+        }
 
         try {
             switch (options.getSubcommand()) {
@@ -78,10 +80,38 @@ export const Music = {
                             member: member
                         }
                     )
-                    return interaction.reply({content: "Request received"})
+                    return interaction.reply({
+                        content: "Request received"
+                    })
+                }
+                case "volume": {
+                    const Volume = options.getNumber("percent") || 0
+
+                    // Volume validation
+                    if (Volume > 100 || Volume < 1) {
+                        return await interaction.reply({
+                            content: "You have to specify a number between 1 and 100.",
+                            ephemeral: true
+                        })
+                    }
+
+                    // Set the volume
+                    client.distube.setVolume(voiceChannel, Volume)
+                    return interaction.reply({
+                        content: `Volume has been set to ${Volume}`,
+                        ephemeral: true
+                    })
+                }
+                case "settings": {
+                    const queue = await client.distube.getQueue(voiceChannel)
+                    if (!queue) {
+                        return interaction.reply({
+                            content: "There is no queue",
+                            ephemeral: true
+                        })
+                    }
                 }
             }
-
         } catch (e) {
             const errorEmbed = new MessageEmbed()
                 .setColor("RED")
