@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits } from "discord.js";
 import * as dotenv from "dotenv";
 import interactionCreate from "./listeners/interactionCreate";
 import ready from "./listeners/ready";
+import {Player} from "discord-player";
 dotenv.config();
 
 const token = process.env.DISCORD_TOKEN;
@@ -17,7 +18,6 @@ const client = new Client({
           GatewayIntentBits.GuildVoiceStates
       ]
 });
-
 ready(client);
 interactionCreate(client);
 
