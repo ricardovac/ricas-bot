@@ -1,62 +1,65 @@
-import {Client, CommandInteraction, GuildTextBasedChannel, MessageEmbed} from "discord.js";
+import {
+    ApplicationCommandOptionType,
+    ApplicationCommandType,
+    CommandInteraction,
+    CommandInteractionOptionResolver,
+    EmbedBuilder,
+    GuildTextBasedChannel,
+    SlashCommandBuilder
+} from "discord.js";
+import UMClient from "../types/common/discord";
 
-export const Music = {
-    name: "music",
-    description: "Music system",
-    options: [
-        {
-            name: "play",
-            description: "Play a song.",
-            type: "SUB_COMMAND",
-            options: [
-                {
-                    name: "query",
-                    description: "Provide a name or url for the song",
-                    type: "STRING",
-                    required: true
-                },
-            ]
-        },
-        {
-            name: "volume",
-            description: "Alter volume",
-            type: "SUB_COMMAND",
-            options: [
-                {
-                    name: "percent",
-                    description: "10 = 10%",
-                    type: "NUMBER",
-                    required: true
-                },
-            ]
-        },
-        {
-            name: "settings",
-            description: "Select an option",
-            type: "SUB_COMMAND",
-            options: [
-                {
-                    name: "options",
-                    description: "Select an option,",
-                    type: "STRING",
-                    required: true,
-                    choices: [
-                        {name: "queue", value: "queue"},
-                        {name: "skip", value: "skip"},
-                        {name: "resume", value: "resume"},
-                        {name: "stop", value: "stop"},
-                    ]
-                }
-            ],
-        }
-    ],
+export default {
+    data: new SlashCommandBuilder()
+        .setName("music")
+        .setDescription("Music system")
+        .addSubcommand(option =>
+            option
+                .setName("play")
+                .setDescription("Play a song")
+                .addStringOption(option =>
+                    option
+                        .setName("query")
+                        .setDescription("Provide a name or url for the song")
+                        .setRequired(true)
+                )
+        )
+        .addSubcommand(option =>
+            option
+                .setName("volume")
+                .setDescription("Alter volume")
+                .addStringOption(option =>
+                    option
+                        .setName("percent")
+                        .setDescription("10 = 10%")
+                        .setRequired(true)
+                )
+        )
+        .addSubcommand(option =>
+            option
+                .setName("settings")
+                .setDescription("Select an option")
+                .addStringOption(option =>
+                    option
+                        .setName("options")
+                        .setDescription("Select an option")
+                        .setRequired(true)
+                        .addChoices(
+                            {name: "queue", value: "queue"},
+                            {name: "skip", value: "skip"},
+                            {name: "resume", value: "resume"},
+                            {name: "stop", value: "stop"}
+                        )
+                )
+        ),
     /*
      * @param {CommandInteraction} interaction
      * @param {Client} client
      */
-    async execute(interaction: CommandInteraction<"cached">, client: Client) {
+    async execute(client: UMClient, interaction: CommandInteraction<'cached'>) {
         const {options, member, guild, channel} = interaction
         const voiceChannel = member.voice.channel
+        const option = interaction.options as CommandInteractionOptionResolver
 
         if (!voiceChannel) {
             return interaction.reply({content: "You must be in a voice channel", ephemeral: true})
@@ -70,11 +73,11 @@ export const Music = {
         }
 
         try {
-            switch (options.getSubcommand()) {
+            switch (option.getSubcommand()) {
                 case "play": {
                     await client.distube.play(
                         voiceChannel,
-                        options.getString("query") || '',
+                        option.getString("query") || '',
                         {
                             textChannel: channel as GuildTextBasedChannel || undefined,
                             member: member
@@ -85,7 +88,7 @@ export const Music = {
                     })
                 }
                 case "volume": {
-                    const Volume = options.getNumber("percent") || 0
+                    const Volume = option.getNumber("percent") || 0
 
                     // Volume validation
                     if (Volume > 100 || Volume < 1) {
@@ -112,7 +115,7 @@ export const Music = {
                     }
 
                     // Skipping, Pausing, Resuming and queue commands
-                    switch (options.getString("options")) {
+                    switch (option.getString("options")) {
                         case "skip": {
                             await queue.skip()
                             return interaction.reply({content: "Song has been skipped."})
@@ -131,8 +134,8 @@ export const Music = {
                         }
                         case "queue": {
                             return interaction.reply({
-                                embeds: [new MessageEmbed()
-                                    .setColor("DARK_PURPLE")
+                                embeds: [new EmbedBuilder()
+                                    .setColor("DarkPurple")
                                     .setDescription(`${queue.songs.map(
                                         (song, id) => `\n**${id + 1}** ${song.name} - \`${song.formattedDuration}\``
                                     )}`)
@@ -144,8 +147,8 @@ export const Music = {
                 }
             }
         } catch (e) {
-            const errorEmbed = new MessageEmbed()
-                .setColor("RED")
+            const errorEmbed = new EmbedBuilder()
+                .setColor("Red")
                 .setDescription(`Alert: ${e}`)
             return interaction.reply({embeds: [errorEmbed]})
         }
