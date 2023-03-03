@@ -1,15 +1,14 @@
 import {
     ApplicationCommandOptionType,
     ApplicationCommandType,
-    CommandInteraction,
     CommandInteractionOptionResolver,
     EmbedBuilder,
     GuildTextBasedChannel,
     SlashCommandBuilder
 } from "discord.js";
-import UMClient from "../types/common/discord";
+import {Command} from "../Command";
 
-export default {
+const Music: Command = {
     data: new SlashCommandBuilder()
         .setName("music")
         .setDescription("Music system")
@@ -53,11 +52,11 @@ export default {
                 )
         ),
     /*
-     * @param {CommandInteraction} interaction
-     * @param {Client} client
+     * @param {CommandInteraction<'cached'>} interaction
+     * @param {UMClient} client
      */
-    async execute(client: UMClient, interaction: CommandInteraction<'cached'>) {
-        const {options, member, guild, channel} = interaction
+    run: async ({interaction, client}) => {
+        const {member, guild, channel} = interaction
         const voiceChannel = member.voice.channel
         const option = interaction.options as CommandInteractionOptionResolver
 
@@ -154,3 +153,5 @@ export default {
         }
     }
 }
+
+export default Music
