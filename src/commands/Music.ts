@@ -1,7 +1,4 @@
 import {
-    ApplicationCommandOptionType,
-    ApplicationCommandType,
-    CommandInteractionOptionResolver,
     EmbedBuilder,
     GuildTextBasedChannel,
     SlashCommandBuilder
@@ -55,16 +52,18 @@ const Music: Command = {
      * @param {CommandInteraction<'cached'>} interaction
      * @param {UMClient} client
      */
-    run: async ({interaction, client}) => {
-        const {member, guild, channel} = interaction
-        const voiceChannel = member.voice.channel
-        const option = interaction.options as CommandInteractionOptionResolver
+    async execute(interaction, client) {
+        const {guild, channel} = interaction
+        const member = await interaction.guild?.members.fetch(interaction.user)
+
+        const voiceChannel = member?.voice.channel
+        const option = interaction.options
 
         if (!voiceChannel) {
             return interaction.reply({content: "You must be in a voice channel", ephemeral: true})
         }
 
-        if (guild.members.me?.voice.channelId && voiceChannel.id !== guild.members.me.voice.channelId) {
+        if (guild?.members.me?.voice.channelId && voiceChannel.id !== guild.members.me.voice.channelId) {
             return interaction.reply({
                 content: `Already playing music in ${guild.members.me.voice.channelId}`,
                 ephemeral: true
@@ -74,12 +73,12 @@ const Music: Command = {
         try {
             switch (option.getSubcommand()) {
                 case "play": {
-                    await client.distube.play(
+                    await client.distube.play( // Problema: client.distube.play
                         voiceChannel,
-                        option.getString("query") || '',
+                        option.getString("query", true),
                         {
-                            textChannel: channel as GuildTextBasedChannel || undefined,
-                            member: member
+                            member: member,
+                            textChannel: channel as GuildTextBasedChannel
                         }
                     )
                     return interaction.reply({
