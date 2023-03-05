@@ -8,8 +8,9 @@ import UMClient from "./types/common/discord";
 import process from "process";
 import interactionCreate from "./listeners/interactionCreate";
 import commandHandler from "./Handlers/CommandHandler";
+import eventHandler from "./Handlers/EventHandler";
 
-dotenv.config();
+dotenv.config()
 const token = process.env.DISCORD_TOKEN;
 
 console.log("Bot is starting...");
@@ -35,12 +36,14 @@ client.distube = new DisTube(client, {
         new SoundCloudPlugin()
     ]
 })
+
 client.commands = new Collection()
 
 commandHandler(client)
+eventHandler(client)
 interactionCreate(client)
-clientEvents(client);
+clientEvents(client)
 
-client.login(token);
+client.login(token)
 
 export default client
