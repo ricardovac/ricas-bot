@@ -1,8 +1,4 @@
-import {
-    EmbedBuilder,
-    GuildTextBasedChannel,
-    SlashCommandBuilder
-} from "discord.js";
+import {EmbedBuilder, GuildTextBasedChannel, SlashCommandBuilder} from "discord.js";
 import {Command} from "../Command";
 
 const Music: Command = {
@@ -49,15 +45,14 @@ const Music: Command = {
                 )
         ),
     /*
-     * @param {CommandInteraction<'cached'>} interaction
+     * @param {ChatInputCommandInteraction<'cached'>} interaction
      * @param {UMClient} client
      */
     async execute(interaction, client) {
-        const {guild, channel} = interaction
+        const {options, guild, channel} = interaction
         const member = await interaction.guild?.members.fetch(interaction.user)
 
         const voiceChannel = member?.voice.channel
-        const option = interaction.options
 
         if (!voiceChannel) {
             return interaction.reply({content: "You must be in a voice channel", ephemeral: true})
@@ -71,11 +66,11 @@ const Music: Command = {
         }
 
         try {
-            switch (option.getSubcommand()) {
+            switch (options.getSubcommand()) {
                 case "play": {
-                    await client.distube.play( // Problema: client.distube.play
+                    await client.distube.play(
                         voiceChannel,
-                        option.getString("query", true),
+                        options.getString("query", true),
                         {
                             member: member,
                             textChannel: channel as GuildTextBasedChannel
@@ -86,7 +81,7 @@ const Music: Command = {
                     })
                 }
                 case "volume": {
-                    const Volume = option.getNumber("percent") || 0
+                    const Volume = options.getNumber("percent") || 0
 
                     // Volume validation
                     if (Volume > 100 || Volume < 1) {
@@ -113,7 +108,7 @@ const Music: Command = {
                     }
 
                     // Skipping, Pausing, Resuming and queue commands
-                    switch (option.getString("options")) {
+                    switch (options.getString("options")) {
                         case "skip": {
                             await queue.skip()
                             return interaction.reply({content: "Song has been skipped."})
