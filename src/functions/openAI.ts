@@ -3,13 +3,14 @@ import {ApplicationCommandType} from "discord.js";
 
 dotenv.config()
 
-const { Configuration, OpenAIApi } = require("openai");
+const {Configuration, OpenAIApi} = require("openai");
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_TOKEN
 });
 
 const openai = new OpenAIApi(configuration);
-async function ask(prompt: any) {
+
+async function ask(prompt: string) {
     const response = await openai.createCompletion({
         model: "text-davinci-002",
         temperature: 0.7,

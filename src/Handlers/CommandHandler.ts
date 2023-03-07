@@ -1,8 +1,8 @@
 import path from "path";
 import {REST, Routes} from "discord.js";
 import fs from "fs";
-import UMClient from "../types/common/discord";
-import {Command} from "../Command";
+import UMClient from "../structures/Client";
+import {Command} from "../structures/Command";
 
 // Create a new client instance
 export default async function commandHandler(client: UMClient) {

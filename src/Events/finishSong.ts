@@ -1,6 +1,6 @@
 import {EmbedBuilder} from 'discord.js';
 import {Events, Queue, Song} from 'distube';
-import {DisTubeEvent} from "../Command";
+import {DisTubeEvent} from "../structures/DistubeEvent";
 
 export const event: DisTubeEvent = {
     name: Events.FINISH_SONG,

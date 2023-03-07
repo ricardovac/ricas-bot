@@ -4,7 +4,7 @@ import clientEvents from "./listeners/client";
 import DisTube from "distube";
 import SpotifyPlugin from "@distube/spotify";
 import SoundCloudPlugin from "@distube/soundcloud";
-import UMClient from "./types/common/discord";
+import UMClient from "./structures/Client";
 import process from "process";
 import interactionCreate from "./listeners/interactionCreate";
 import commandHandler from "./Handlers/CommandHandler";
@@ -26,7 +26,10 @@ const client = new Client({
 }) as UMClient;
 
 client.distube = new DisTube(client, {
+    searchSongs: 1,
     emitNewSongOnly: true,
+    leaveOnStop: true,
+    leaveOnEmpty: true,
     leaveOnFinish: true,
     emitAddSongWhenCreatingQueue: false,
     plugins: [

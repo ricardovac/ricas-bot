@@ -1,5 +1,5 @@
 import {Events, Queue} from 'distube';
-import {DisTubeEvent} from "../Command";
+import {DisTubeEvent} from "../structures/DistubeEvent";
 
 export const event: DisTubeEvent = {
     name: Events.EMPTY,

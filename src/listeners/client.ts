@@ -1,4 +1,4 @@
-import {Client, Events, TextChannel} from "discord.js";
+import {Client, Events, Message, TextChannel} from "discord.js";
 import ask from '../functions/openAI'
 import * as dotenv from 'dotenv'
 
@@ -28,7 +28,7 @@ export default (client: Client): void => {
         console.log(`${client.user.username} is disconnecting`);
     })
 
-    client.on(Events.MessageCreate, async (message: any) => {
+    client.on(Events.MessageCreate, async (message: Message) => {
         if (message.content.substring(0, 3) === "!ai") {
             const prompt = message.content.substring(3); // remove the prefix
             const answer = await ask(prompt); // prompt GPT-3
