@@ -1,5 +1,5 @@
 import {EmbedBuilder, GuildTextBasedChannel, SlashCommandBuilder} from "discord.js";
-import {Command} from "../Command";
+import {Command} from "../structures/Command";
 
 const Music: Command = {
     data: new SlashCommandBuilder()
@@ -20,10 +20,10 @@ const Music: Command = {
             option
                 .setName("volume")
                 .setDescription("Alter volume")
-                .addStringOption(option =>
+                .addNumberOption(option =>
                     option
                         .setName("percent")
-                        .setDescription("10 = 10%")
+                        .setDescription("1 - 100%")
                         .setRequired(true)
                 )
         )
@@ -65,6 +65,8 @@ const Music: Command = {
             })
         }
 
+        await interaction.deferReply();
+
         try {
             switch (options.getSubcommand()) {
                 case "play": {
@@ -76,7 +78,7 @@ const Music: Command = {
                             textChannel: channel as GuildTextBasedChannel
                         }
                     )
-                    return interaction.reply({
+                    return interaction.editReply({
                         content: "Request received"
                     })
                 }
@@ -85,25 +87,22 @@ const Music: Command = {
 
                     // Volume validation
                     if (Volume > 100 || Volume < 1) {
-                        return await interaction.reply({
+                        return await interaction.editReply({
                             content: "You have to specify a number between 1 and 100.",
-                            ephemeral: true
                         })
                     }
 
                     // Set the volume
                     client.distube.setVolume(voiceChannel, Volume)
-                    return interaction.reply({
+                    return interaction.editReply({
                         content: `Volume has been set to ${Volume}`,
-                        ephemeral: true
                     })
                 }
                 case "settings": {
                     const queue = await client.distube.getQueue(voiceChannel)
                     if (!queue) {
-                        return interaction.reply({
+                        return interaction.editReply({
                             content: "There is no queue",
-                            ephemeral: true
                         })
                     }
 
@@ -111,22 +110,22 @@ const Music: Command = {
                     switch (options.getString("options")) {
                         case "skip": {
                             await queue.skip()
-                            return interaction.reply({content: "Song has been skipped."})
+                            return interaction.editReply({content: "Song has been skipped."})
                         }
                         case "stop": {
                             await queue.stop()
-                            return interaction.reply({content: "Music has been stopped."})
+                            return interaction.editReply({content: "Music has been stopped."})
                         }
                         case "pause": {
                             await queue.pause()
-                            return interaction.reply({content: "Music has been paused."})
+                            return interaction.editReply({content: "Music has been paused."})
                         }
                         case "resume": {
                             await queue.resume()
-                            return interaction.reply({content: "Music has been resumed."})
+                            return interaction.editReply({content: "Music has been resumed."})
                         }
                         case "queue": {
-                            return interaction.reply({
+                            return interaction.editReply({
                                 embeds: [new EmbedBuilder()
                                     .setColor("DarkPurple")
                                     .setDescription(`${queue.songs.map(
@@ -143,7 +142,7 @@ const Music: Command = {
             const errorEmbed = new EmbedBuilder()
                 .setColor("Red")
                 .setDescription(`Alert: ${e}`)
-            return interaction.reply({embeds: [errorEmbed]})
+            return interaction.editReply({embeds: [errorEmbed]})
         }
     }
 }
