@@ -9,6 +9,6 @@ import UMClient from "./Client";
 export interface Command {
     data:
         | SlashCommandSubcommandsOnlyBuilder
-        | Omit<SlashCommandSubcommandsOnlyBuilder, "addSubcommand">;
-    execute: (interaction: ChatInputCommandInteraction<'cached'>, client: UMClient) => Promise<InteractionResponse<true> | Message<boolean> | undefined>
+        | Omit<SlashCommandSubcommandsOnlyBuilder, "addSubcommand" | "addSubcommandGroup">;
+    execute: (interaction: ChatInputCommandInteraction<'cached'>, client: UMClient) => Promise<InteractionResponse<true> | Message<boolean> | void>
 }
