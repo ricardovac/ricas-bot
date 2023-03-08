@@ -8,7 +8,7 @@ import {
     TextChannel
 } from "discord.js";
 
-const Pool: Command = {
+const Poll: Command = {
     data: new SlashCommandBuilder()
         .setName("poll")
         .setDescription("Create a poll.")
@@ -17,7 +17,7 @@ const Pool: Command = {
         .addStringOption(options =>
             options
                 .setName("question")
-                .setDescription("Provide the question of the pool")
+                .setDescription("Provide the question of the poll")
                 .setRequired(true)
         )
         .addChannelOption(options =>
@@ -33,7 +33,7 @@ const Pool: Command = {
         const {options} = interaction
 
         const channel = options.getChannel("channel")
-        const pollQuestion = interaction.options.getString("question")
+        const pollQuestion = options.getString("question")
 
         const embed = new EmbedBuilder()
             .setTitle('😲 New Poll! 😲')
@@ -52,4 +52,4 @@ const Pool: Command = {
     }
 }
 
-export default Pool
+export default Poll
