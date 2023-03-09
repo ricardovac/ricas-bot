@@ -28,8 +28,14 @@ const UrbanDict: Command = {
                 .setColor("Purple")
                 .setDescription(answer.word)
                 .setURL(answer.permalink)
-                .addFields({name: "Definition: ", value: `${answer.definition}`})
-                .addFields({name: "Example: ", value: `${answer.example}`})
+                .addFields({
+                    name: "Definition: ",
+                    value: `${answer.definition.length > 1024 ? `${answer.definition.slice(0, 1020)}...` : answer.definition}`
+                })
+                .addFields({
+                    name: "Example: ",
+                    value: `${answer.example.length > 1024 ? `${answer.example.slice(0, 1020)}...` : answer.example}`
+                })
             ]
         })
     }
