@@ -1,4 +1,4 @@
-import {Command} from "../structures/Command";
+import {Command} from "../Structures/Command";
 import {EmbedBuilder, SlashCommandBuilder} from "discord.js";
 import axios from "axios";
 
@@ -15,8 +15,10 @@ const UrbanDict: Command = {
     /*
      * @param {ChatInputCommandInteraction<'cached'>} interaction
      */
-    async execute(interaction) {
+    async execute(interaction, args) {
         const {options} = interaction
+
+        console.log(args)
 
         const word = options.getString("word")
         const data = await axios.get(`https://api.urbandictionary.com/v0/define?term=${word}`)

@@ -1,4 +1,4 @@
-import {Command} from "../structures/Command";
+import {Command} from "../Structures/Command";
 import {SlashCommandBuilder} from "discord.js";
 import {Configuration, OpenAIApi} from "openai";
 import * as dotenv from "dotenv";
@@ -22,7 +22,7 @@ const ChatGPT: Command = {
         ),
     async execute(interaction) {
         const prompt = interaction.options.getString("prompt")
-        await interaction.deferReply()
+        await interaction.deferReply();
 
         const response = await openai.createCompletion({
             model: "text-davinci-003",

@@ -1,12 +1,12 @@
 import {Client, Collection, GatewayIntentBits, PermissionFlagsBits} from "discord.js";
 import * as dotenv from "dotenv";
-import clientEvents from "./listeners/client";
+import clientEvents from "./Listeners/client";
 import DisTube from "distube";
 import SpotifyPlugin from "@distube/spotify";
 import SoundCloudPlugin from "@distube/soundcloud";
-import UMClient from "./structures/Client";
+import UMClient from "./Structures/Client";
 import process from "process";
-import interactionCreate from "./listeners/interactionCreate";
+import interactionCreate from "./Listeners/interactionCreate";
 import commandHandler from "./Handlers/CommandHandler";
 import eventHandler from "./Handlers/EventHandler";
 
@@ -26,17 +26,17 @@ const client = new Client({
 }) as UMClient;
 
 client.distube = new DisTube(client, {
-    searchSongs: 1,
     emitNewSongOnly: true,
-    leaveOnStop: true,
     leaveOnEmpty: true,
-    leaveOnFinish: true,
+    emptyCooldown: 0,
+    leaveOnStop: true,
     emitAddSongWhenCreatingQueue: false,
+    emitAddListWhenCreatingQueue: false,
     plugins: [
         new SpotifyPlugin({
             emitEventsAfterFetching: true
         }),
-        new SoundCloudPlugin()
+        new SoundCloudPlugin(),
     ]
 })
 

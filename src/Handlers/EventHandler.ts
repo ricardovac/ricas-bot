@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
-import UMClient from "../structures/Client";
-import {DisTubeEvent} from "../structures/DistubeEvent";
+import UMClient from "../Structures/Client";
+import {DisTubeEvent} from "../Structures/DistubeEvent";
 
 export default async function eventHandler(client: UMClient) {
     const distubePath = path.join(__dirname, "../Events/Distube");

@@ -1,5 +1,5 @@
 import {EmbedBuilder, GuildTextBasedChannel, SlashCommandBuilder} from "discord.js";
-import {Command} from "../structures/Command";
+import {Command} from "../Structures/Command";
 
 const Music: Command = {
     data: new SlashCommandBuilder()

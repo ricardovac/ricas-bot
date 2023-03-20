@@ -1,5 +1,5 @@
 import {Events, Interaction, PermissionFlagsBits} from "discord.js";
-import UMClient from "../structures/Client";
+import UMClient from "../Structures/Client";
 
 export default (client: UMClient): void => {
     client.on(Events.InteractionCreate, async (interaction: Interaction) => {

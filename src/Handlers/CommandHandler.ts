@@ -1,18 +1,18 @@
 import path from "path";
 import {REST, Routes} from "discord.js";
 import fs from "fs";
-import UMClient from "../structures/Client";
-import {Command} from "../structures/Command";
+import UMClient from "../Structures/Client";
+import {Command} from "../Structures/Command";
 
 // Create a new client instance
 export default async function commandHandler(client: UMClient) {
     const commands: Command[] = [];
 
-    const commandsPath = path.join(__dirname, '../commands');
+    const commandsPath = path.join(__dirname, '../Commands');
     const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.ts'));
 
     for (const file of commandFiles) {
-        const command = await import(`../commands/${file}`);
+        const command = await import(`../Commands/${file}`);
         // Set a new item in the Collection with the key as the command name and the value as the exported module
         client.commands.set(command.default.data.name, command.default)
         commands.push(command.default);
