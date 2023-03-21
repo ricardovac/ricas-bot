@@ -1,4 +1,4 @@
-import {Events, TextChannel} from "discord.js";
+import {EmbedBuilder, Events, TextChannel} from "discord.js";
 import * as dotenv from 'dotenv'
 import UMClient from "../Structures/Client";
 
@@ -31,7 +31,17 @@ export default (client: UMClient): void => {
             await channel.send("Working!!!");
         }
 
-        if (command === 'play') {
+        if (command === 'avatar' || command === 'av') {
+            const user = message.mentions.users.first() || client.users.cache.get(args[0]) || message.author;
+
+            const avatar = user.avatarURL({size: 1024, extension: "png", forceStatic: false});
+
+            const embed = new EmbedBuilder()
+                .setColor("Purple")
+                .setTitle(`Avatar de ${user.username}`)
+                .setImage(avatar)
+                .setFooter({text: `${message.author.tag}`, iconURL: `${message.author.avatarURL()}`});
+            await message.channel.send({embeds: [embed]});
         }
     })
 };
