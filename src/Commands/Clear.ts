@@ -1,13 +1,11 @@
 import {Command} from "../Structures/Command";
-import {PermissionFlagsBits, SlashCommandBuilder} from "discord.js";
+import {PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder} from "discord.js";
 import ms from 'ms'
 
 const Clear: Command = {
     data: new SlashCommandBuilder()
         .setName('clear')
         .setDescription('It clears your chat!')
-        .setDMPermission(false)
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addIntegerOption(options =>
             options
                 .setName('amount')
@@ -15,8 +13,15 @@ const Clear: Command = {
                 .setRequired(true)
         ),
     async execute(interaction) {
-        const {options, channel} = interaction
+        const {options, channel, member} = interaction
         const amount = options.getInteger("amount")
+
+        if (!member.permissions.has(PermissionsBitField.Flags.ManageMessages)) {
+            return await interaction.reply({
+                content: "You don't have **Manage Messages** permission to execute this command",
+                ephemeral: true
+            })
+        }
 
         if (amount! > 100) {
             return interaction.followUp({
