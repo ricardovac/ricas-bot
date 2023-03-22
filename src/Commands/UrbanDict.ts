@@ -15,10 +15,8 @@ const UrbanDict: Command = {
     /*
      * @param {ChatInputCommandInteraction<'cached'>} interaction
      */
-    async execute(interaction, args) {
+    async execute(interaction) {
         const {options} = interaction
-
-        console.log(args)
 
         const word = options.getString("word")
         const data = await axios.get(`https://api.urbandictionary.com/v0/define?term=${word}`)
@@ -28,7 +26,7 @@ const UrbanDict: Command = {
         await interaction.reply({
             embeds: [new EmbedBuilder()
                 .setColor("Purple")
-                .setDescription(answer.word)
+                .setDescription(`${await interaction.guild.members.fetch(interaction.user.id)} wants to know what **${answer.word}** means`)
                 .setURL(answer.permalink)
                 .addFields({
                     name: "Definition: ",
