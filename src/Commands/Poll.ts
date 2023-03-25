@@ -4,6 +4,7 @@ import {
     ChannelType,
     EmbedBuilder,
     PermissionFlagsBits,
+    PermissionsBitField,
     SlashCommandBuilder,
     TextChannel
 } from "discord.js";
@@ -12,8 +13,6 @@ const Poll: Command = {
     data: new SlashCommandBuilder()
         .setName("poll")
         .setDescription("Create a poll.")
-        .setDMPermission(false)
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addStringOption(options =>
             options
                 .setName("question")
@@ -30,10 +29,16 @@ const Poll: Command = {
      * @param {ChatInputCommandInteraction<'cached'>} interaction
      */
     async execute(interaction) {
-        const {options} = interaction
-
+        const {options, member} = interaction
         const channel = options.getChannel("channel")
         const pollQuestion = options.getString("question")
+
+        if (!member.permissions.has(PermissionsBitField.Flags.Administrator)) {
+            return await interaction.reply({
+                content: "You don't have **Administrator** permission to execute this command",
+                ephemeral: true
+            })
+        }
 
         const embed = new EmbedBuilder()
             .setTitle('😲 New Poll! 😲')
