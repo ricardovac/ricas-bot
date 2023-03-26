@@ -53,6 +53,23 @@ const Moderation: Command = {
                         .setDescription('ID')
                         .setRequired(true)
                 )
+        )
+        .addSubcommand(options =>
+            options
+                .setName("setnick")
+                .setDescription("Set nickname for a member")
+                .addUserOption(options =>
+                    options
+                        .setName('member')
+                        .setDescription('Provide member')
+                        .setRequired(true)
+                )
+                .addStringOption(options =>
+                    options
+                        .setName('nickname')
+                        .setDescription('Provide nickname')
+                        .setRequired(true)
+                )
         ),
     async execute(interaction) {
         const {guild, member, options} = interaction;
@@ -198,6 +215,23 @@ const Moderation: Command = {
                         })
                         .catch(err => console.log(err))
                     break
+                }
+                case "setnick": {
+                    const user = options.getUser("member")
+                    const member = guild.members.cache.get(user!.id)
+                    const nick = options.getString('nickname')
+
+                    member?.setNickname(`${nick}`).then(() => {
+                        interaction.reply({
+                            content: `Successfully changed \`${user?.tag}'s\` nickname to \`${nick}\``,
+                            ephemeral: true
+                        })
+                    }).catch(e => {
+                        interaction.reply({
+                            content: `${e}`,
+                            ephemeral: true
+                        })
+                    })
                 }
             }
         } catch (e) {
