@@ -60,7 +60,7 @@ const Moderation: Command = {
                 .setDescription("Set nickname for a member")
                 .addUserOption(options =>
                     options
-                        .setName('member')
+                        .setName('usernick')
                         .setDescription('Provide member')
                         .setRequired(true)
                 )
@@ -70,7 +70,30 @@ const Moderation: Command = {
                         .setDescription('Provide nickname')
                         .setRequired(true)
                 )
-        ),
+        )
+        .addSubcommand(options =>
+            options
+                .setName('mute')
+                .setDescription("Mutes a user in the server.")
+                .addUserOption(options =>
+                    options
+                        .setName('muteuser')
+                        .setDescription('The user to mute')
+                        .setRequired(true)
+                )
+                .addStringOption(option =>
+                    option.setName('reason')
+                        .setDescription('The reason for the mute.')
+                        .setRequired(false))
+        )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName('unmute')
+                .setDescription('Unmutes a user.')
+                .addUserOption(option =>
+                    option.setName('unmuteuser')
+                        .setDescription('The user to unmute.')
+                        .setRequired(true))),
     async execute(interaction) {
         const {guild, member, options} = interaction;
 
@@ -217,21 +240,87 @@ const Moderation: Command = {
                     break
                 }
                 case "setnick": {
-                    const user = options.getUser("member")
+                    const user = options.getUser("usernick")
                     const member = guild.members.cache.get(user!.id)
                     const nick = options.getString('nickname')
 
-                    member?.setNickname(`${nick}`).then(() => {
-                        interaction.reply({
+                    member?.setNickname(`${nick}`).then(async () => {
+                        await interaction.reply({
                             content: `Successfully changed \`${user?.tag}'s\` nickname to \`${nick}\``,
                             ephemeral: true
                         })
-                    }).catch(e => {
-                        interaction.reply({
+                    }).catch(async e => {
+                        await interaction.reply({
                             content: `${e}`,
                             ephemeral: true
                         })
                     })
+                    break
+                }
+                case "mute": {
+                    const targetUser = interaction.options.getUser('muteuser');
+                    const reason = interaction.options.getString('reason') ?? 'No reason specified.';
+                    const targetMember = guild.members.cache.get(targetUser!.id);
+
+                    if (!targetMember) {
+                        return await interaction.reply({
+                            content: 'Could not find the specified user.',
+                            ephemeral: true
+                        });
+                    }
+                    if (targetMember.roles.cache.some(role => role.name === 'Muted')) {
+                        return await interaction.reply({
+                            content: 'This user is already muted.',
+                            ephemeral: true
+                        });
+                    }
+
+                    const mutedRole = guild.roles.cache.find(role => role.name === 'Muted');
+                    if (!mutedRole) {
+                        return await interaction.reply({
+                            content: 'Could not find the "Muted" role. Please create it first.',
+                            ephemeral: true
+                        });
+                    }
+
+                    try {
+                        await targetMember.roles.add(mutedRole);
+                        await interaction.reply({
+                            content: `Muted ${targetUser?.tag} for reason: ${reason}`,
+                            ephemeral: true
+                        });
+                    } catch (error) {
+                        console.error(error);
+                        await interaction.reply({
+                            content: 'Could not mute the user.',
+                            ephemeral: true
+                        });
+                    }
+                    break
+                }
+                case "unmute": {
+                    const targetUser = interaction.options.getUser('unmuteuser');
+                    const targetMember = guild.members.cache.get(targetUser!.id);
+
+                    if (!targetMember?.roles.cache.some(role => role.name === 'Muted')) {
+                        return interaction.reply({content: 'This user is not muted.', ephemeral: true});
+                    }
+
+                    const mutedRole = guild.roles.cache.find(role => role.name === 'Muted');
+                    if (!mutedRole) {
+                        return interaction.reply({
+                            content: 'Could not find the "Muted" role. Please create it first.',
+                            ephemeral: true
+                        });
+                    }
+
+                    try {
+                        await targetMember.roles.remove(mutedRole);
+                        await interaction.reply({content: `Unmuted ${targetUser?.tag}.`, ephemeral: true});
+                    } catch (error) {
+                        console.error(error);
+                        await interaction.reply({content: 'Could not unmute the user.', ephemeral: true});
+                    }
                 }
             }
         } catch (e) {
